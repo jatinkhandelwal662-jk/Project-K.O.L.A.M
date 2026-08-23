@@ -6,7 +6,7 @@
 // --------------------------------------------------------------------------
 // 1. Global State & Configuration
 // --------------------------------------------------------------------------
-const API_BASE_URL = "https://project-k-o-l-a-m-backend.onrender.com/";
+const API_BASE_URL = "https://project-k-o-l-a-m-backend.onrender.com";
 const DEMO_MODE = false; 
 
 let isBackendOnline = false;
