@@ -1,0 +1,15 @@
+.venv/
+.venv-1/
+.venv-2/
+__pycache__/
+*.pyc
+testing/
+*.jpg
+*.png
+temp_upload_*
+kolam_dataset/
+*.zip
+*.safetensors
+KOLAM_ART/final_kala_sutra_model/
+.env
+*.env

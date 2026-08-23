@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+python-multipart
+gradio
+torch
+torchvision
+ultralytics
+transformers
+accelerate
+diffusers
+opencv-python-headless
+pillow
+numpy
+pydantic
