@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KOLAM — Where Mathematics Becomes Art</title>
+  <link rel="shortcut icon" href="favicon.svg" type="image/svg">
+  <meta name="description" content="An interactive cultural-tech experience exploring AI Kolam art generation, image restoration, symmetry, geometry, and algorithms.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&family=Tiro+Devanagari+Hindi&family=Tiro+Tamil&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons CDN (Lightweight) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="splash-locked">
+
+  <!-- ------------------------------------------------------------------------
+       0. Entry Splash — Kolam Drawing Ritual (auto-dismisses after 10s)
+       ------------------------------------------------------------------------ -->
+  <div class="intro-splash" id="intro-splash" role="dialog" aria-label="Kolam introduction">
+    <div class="intro-splash-paper" aria-hidden="true"></div>
+
+    <!-- Toran: hanging paisley/mango-leaf garland strip -->
+    <div class="intro-splash-toran" aria-hidden="true"></div>
+
+    <!-- Falling flower petals -->
+    <div class="intro-splash-petals" id="intro-splash-petals" aria-hidden="true"></div>
+
+    <!-- Classical mathematical notation drifting around the splash -->
+    <div class="loading-math" aria-hidden="true">
+      <span class="loading-math-symbol loading-math-symbol--one">P<sub>i,j</sub> &isin; {0, 1}</span>
+      <span class="loading-math-symbol loading-math-symbol--two">R<sub>n</sub>(&theta;) = 2&pi; / n</span>
+      <span class="loading-math-symbol loading-math-symbol--three">G = (V, E)</span>
+      <span class="loading-math-symbol loading-math-symbol--four">V &minus; E + F = 2</span>
+      <span class="loading-math-symbol loading-math-symbol--five">r = a cos(n&theta;)</span>
+      <span class="loading-math-symbol loading-math-symbol--six">&sum;<sub>k=1</sub><sup>n</sup> &ang; e<sub>k</sub> = 2&pi;</span>
+    </div>
+
+    <!-- Ornamental Frame Corners -->
+    <span class="intro-splash-frame-corner intro-splash-frame-corner--tl" aria-hidden="true"></span>
+    <span class="intro-splash-frame-corner intro-splash-frame-corner--tr" aria-hidden="true"></span>
+    <span class="intro-splash-frame-corner intro-splash-frame-corner--bl" aria-hidden="true"></span>
+    <span class="intro-splash-frame-corner intro-splash-frame-corner--br" aria-hidden="true"></span>
+
+    <!-- Four Corner Kolam Motifs -->
+    <div class="intro-splash-corner intro-splash-corner--tl" aria-hidden="true">
+      <svg class="intro-corner-svg" viewBox="0 0 120 120"><g class="corner-dots"></g><g class="corner-lines"></g></svg>
+    </div>
+    <div class="intro-splash-corner intro-splash-corner--tr" aria-hidden="true">
+      <svg class="intro-corner-svg" viewBox="0 0 120 120"><g class="corner-dots"></g><g class="corner-lines"></g></svg>
+    </div>
+    <div class="intro-splash-corner intro-splash-corner--bl" aria-hidden="true">
+      <svg class="intro-corner-svg" viewBox="0 0 120 120"><g class="corner-dots"></g><g class="corner-lines"></g></svg>
+    </div>
+    <div class="intro-splash-corner intro-splash-corner--br" aria-hidden="true">
+      <svg class="intro-corner-svg" viewBox="0 0 120 120"><g class="corner-dots"></g><g class="corner-lines"></g></svg>
+    </div>
+
+    <div class="intro-splash-inner">
+      <div class="intro-splash-kicker">Ethnomathematics &amp; Threshold Art</div>
+      <h1 class="intro-splash-title">
+        <span class="intro-splash-title-word" id="intro-splash-title-word" lang="en">KOLAM</span>
+      </h1>
+
+      <div class="intro-splash-canvas-wrap" id="intro-splash-canvas-wrap">
+        <svg id="intro-splash-svg" class="intro-splash-svg" viewBox="0 0 300 300" fill="none" aria-hidden="true">
+          <!-- Pulli (dots) placed first, as a Kolam artist always begins -->
+          <g id="splash-dots"></g>
+          <!-- Continuous looped line (Kambi) traced around the dots -->
+          <g id="splash-lines"></g>
+        </svg>
+      </div>
+
+      <p class="intro-splash-text">
+        Before sunrise, across thresholds in South India, a single hand traces rice-flour dots
+        into an unbroken looping line &mdash; a Kolam. It is geometry offered as devotion: symmetry,
+        topology and rhythm drawn fresh each dawn, never meant to last, only to be made again.
+      </p>
+
+      <div class="intro-splash-status">
+        <span id="intro-splash-status-text">Placing the pulli&hellip;</span>
+      </div>
+    </div>
+
+    <!-- Bottom bar: pulli (dot) progress trail -->
+    <div class="intro-splash-bottom-bar" aria-hidden="true">
+      <div class="intro-splash-dots" id="intro-splash-dots"></div>
+    </div>
+  </div>
+
+
+
+  <!-- Village door reveal after the Kolam ritual -->
+  <div class="village-door-reveal" id="village-door-reveal" aria-hidden="true">
+    <div class="door-halo"></div>
+    <div class="door-frame">
+      <div class="door-lintel">
+        <span>ॐ</span><strong>KOLAM VEEDU</strong><span>ஓம்</span>
+      </div>
+      <div class="doorway">
+        <div class="door-interior">
+          <div class="door-lamp"></div>
+          <div class="door-villager" aria-hidden="true">
+            <span class="villager-head"></span><span class="villager-body"></span>
+            <span class="villager-arm villager-arm--left"></span>
+            <span class="villager-arm villager-arm--right"></span>
+            <span class="villager-dhoti"></span>
+          </div>
+          <div class="door-kolam-mark"><span></span><span></span><span></span><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="door-panel door-panel--left"><div class="wood-grain"></div><div class="door-decor"><span class="door-ring"></span><span class="door-panel-kolam">◈</span></div></div>
+        <div class="door-panel door-panel--right"><div class="wood-grain"></div><div class="door-decor"><span class="door-ring"></span><span class="door-panel-kolam">◈</span></div></div>
+      </div>
+      <div class="door-threshold"><div class="threshold-kolam"><span></span><span></span><span></span><span></span><b></b><b></b><b></b><b></b></div></div>
+    </div>
+    <div class="door-caption"><span id="door-reveal-text">The door to the courtyard is opening…</span></div>
+  </div>
+
+  <!-- Rice Paper Texture Overlay -->
+  <div class="rice-paper-overlay" aria-hidden="true"></div>
+
+  <!-- ------------------------------------------------------------------------
+       1. Minimal Floating Navigation
+       ------------------------------------------------------------------------ -->
+  <nav class="navbar" id="navbar">
+    <a href="#hero" class="nav-brand">
+      <div class="logo-dot-symbol" aria-hidden="true">
+        <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4">
+          <circle cx="50" cy="50" r="12" fill="var(--terracotta)" />
+          <circle cx="50" cy="20" r="6" fill="var(--maroon)" />
+          <circle cx="50" cy="80" r="6" fill="var(--maroon)" />
+          <circle cx="20" cy="50" r="6" fill="var(--maroon)" />
+          <circle cx="80" cy="50" r="6" fill="var(--maroon)" />
+          <path d="M 50 20 Q 80 20 80 50 Q 80 80 50 80 Q 20 80 20 50 Q 20 20 50 20 Z" stroke="var(--gold)" stroke-width="3" />
+        </svg>
+      </div>
+      <span>KOLAM</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#hero" class="nav-link active" id="nav-home">Home</a></li>
+      <li><a href="#interactive-nodes" class="nav-link" id="nav-create" onclick="selectNode('text')">Create</a></li>
+      <li><a href="#interactive-nodes" class="nav-link" id="nav-restore" onclick="selectNode('restore')">Restore</a></li>
+      <li><a href="#community" class="nav-link" id="nav-community">Community</a></li>
+    </ul>
+
+    <div class="nav-controls">
+      <!-- Backend Health Indicator -->
+      <div class="health-badge" id="health-badge" title="FastAPI Engine Connection Status">
+        <span class="health-pulse"></span>
+        <span id="health-text">Checking Engine...</span>
+      </div>
+
+      <button class="nav-toggle-btn" id="nav-toggle-btn" aria-label="Toggle Mobile Navigation">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ------------------------------------------------------------------------
+       2. Hero Section — "THE FIRST DOT"
+       ------------------------------------------------------------------------ -->
+  <section class="hero-section" id="hero">
+
+    <div class="village-hero-scene" aria-hidden="true">
+      <svg class="village-hero-svg" viewBox="0 0 1600 600" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="vh-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4A121F"/><stop offset="55%" stop-color="#6B1D2F"/><stop offset="100%" stop-color="#C17854"/></linearGradient>
+          <linearGradient id="vh-ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C88B63"/><stop offset="100%" stop-color="#8A4A32"/></linearGradient>
+          <filter id="vh-soft"><feGaussianBlur stdDeviation="10"/></filter>
+        </defs>
+        <rect width="1600" height="600" fill="url(#vh-sky)"/>
+        <circle cx="800" cy="180" r="105" fill="#D4AF37" opacity=".16" filter="url(#vh-soft)"/>
+        <circle cx="800" cy="180" r="52" fill="#D4AF37" opacity=".15"/>
+
+        <g fill="#3C1F1A" opacity=".48">
+          <path d="M0 395 V330 L135 250 L270 330 V395Z"/><path d="M75 330L135 285L195 330Z" fill="#2F1714"/>
+          <path d="M1330 395V325L1465 242L1600 325V395Z"/><path d="M1405 325L1465 278L1525 325Z" fill="#2F1714"/>
+          <rect x="90" y="350" width="42" height="45" rx="2" fill="#6B1D2F"/><rect x="1460" y="345" width="42" height="50" rx="2" fill="#6B1D2F"/>
+        </g>
+
+        <g stroke="#3C241B" stroke-width="8" fill="none" opacity=".65" stroke-linecap="round">
+          <path d="M160 410C155 320 165 245 180 190"/><path d="M1440 410C1445 320 1435 245 1420 190"/>
+        </g>
+        <g fill="#304A32" opacity=".72">
+          <path d="M180 210Q125 170 92 195Q130 205 180 222Q140 145 122 118Q156 145 180 202Q185 145 230 122Q212 164 185 213Q235 178 280 186Q240 205 180 220Z"/>
+          <path d="M1420 210Q1365 170 1332 195Q1370 205 1420 222Q1380 145 1362 118Q1396 145 1420 202Q1425 145 1470 122Q1452 164 1425 213Q1475 178 1520 186Q1480 205 1420 220Z"/>
+        </g>
+
+        <path d="M0 370Q380 335 800 370Q1220 405 1600 370V600H0Z" fill="url(#vh-ground)"/>
+        <path d="M0 390Q420 355 800 392Q1180 425 1600 388" fill="none" stroke="#F5D6B7" stroke-opacity=".25" stroke-width="3"/>
+
+        <g transform="translate(800 445)" fill="none" stroke="#FFF8EB" stroke-width="3.5" opacity=".78" stroke-linecap="round">
+          <circle r="86" stroke-dasharray="2 14"/>
+          <path d="M0-78C-38-52-55-15 0 0C55-15 38-52 0-78Z"/><path d="M78 0C52-38 15-55 0 0C15 55 52 38 78 0Z"/>
+          <path d="M0 78C38 52 55 15 0 0C-55 15-38 52 0 78Z"/><path d="M-78 0C-52 38-15 55 0 0C-15-55-52-38-78 0Z"/>
+        </g>
+        <g fill="#FFF8EB" opacity=".9"><circle cx="720" cy="445" r="4"/><circle cx="760" cy="405" r="4"/><circle cx="800" cy="390" r="4"/><circle cx="840" cy="405" r="4"/><circle cx="880" cy="445" r="4"/><circle cx="840" cy="485" r="4"/><circle cx="800" cy="500" r="4"/><circle cx="760" cy="485" r="4"/></g>
+
+        <g class="vh-villager vh-villager--left" transform="translate(410 372)">
+          <ellipse cx="0" cy="132" rx="86" ry="18" fill="#3A211A" opacity=".26"/>
+          <path d="M-42 115Q-48 46 7 38Q48 44 54 102Q42 130 0 133Q-30 131-42 115Z" fill="#5A2D22"/>
+          <circle cx="18" cy="25" r="19" fill="#6D3A2B"/>
+          <path d="M-27 65Q-75 70-94 99" fill="none" stroke="#6D3A2B" stroke-width="12" stroke-linecap="round"/>
+          <path class="vh-arm-drawing" d="M-76 98Q-110 117-124 133" fill="none" stroke="#6D3A2B" stroke-width="9" stroke-linecap="round"/>
+          <circle cx="-126" cy="135" r="3.5" fill="#FFF8EB"/>
+          <path d="M-25 133L-8 173M26 133L46 171" stroke="#4A241B" stroke-width="15" stroke-linecap="round"/>
+        </g>
+        <g class="vh-villager vh-villager--right" transform="translate(1170 380)">
+          <ellipse cx="0" cy="124" rx="78" ry="16" fill="#3A211A" opacity=".22"/>
+          <path d="M-36 108Q-40 45 7 37Q44 43 46 97Q32 120 0 124Q-24 121-36 108Z" fill="#6B1D2F"/>
+          <circle cx="14" cy="24" r="18" fill="#794231"/>
+          <path d="M-23 61Q-61 69-82 99" fill="none" stroke="#794231" stroke-width="11" stroke-linecap="round"/>
+          <path class="vh-arm-drawing" d="M-66 96Q-94 110-110 128" fill="none" stroke="#794231" stroke-width="9" stroke-linecap="round"/>
+          <circle cx="-111" cy="129" r="3.4" fill="#FFF8EB"/>
+          <path d="M-22 122L-8 160M22 122L39 160" stroke="#4A241B" stroke-width="14" stroke-linecap="round"/>
+        </g>
+
+        <g transform="translate(620 275)" opacity=".55"><circle cx="0" cy="0" r="18" fill="#6D3A2B"/><path d="M-30 80Q-32 20 0 18Q34 20 31 80Z" fill="#7E3E2C"/></g>
+        <g fill="#D4AF37"><path d="M333 424Q350 406 367 424Q358 438 342 438Z"/><circle cx="350" cy="417" r="3"/><path d="M1230 428Q1247 410 1264 428Q1255 442 1239 442Z"/><circle cx="1247" cy="421" r="3"/></g>
+      </svg>
+    </div>
+
+    <div class="hero-canvas-container">
+      <canvas id="hero-canvas"></canvas>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        <i class="fa-solid fa-sparkles"></i> Cultural Tech & Ethnomathematics
+      </div>
+      <h1 class="hero-title">KOLAM</h1>
+      <p class="hero-subtitle">"Where Mathematics Becomes Art."</p>
+      <p class="hero-description">
+        Every dot is a possibility. Every curve is a rule. Every pattern is an algorithm drawn by hand.
+      </p>
+
+      <div class="hero-cta-group">
+        <a href="#interactive-nodes" class="btn-primary">
+          <span>Enter the Pattern</span>
+          <i class="fa-solid fa-arrow-down-long"></i>
+        </a>
+        <a href="#community" class="btn-secondary">
+          <span>Kolam of the Day</span>
+          <i class="fa-solid fa-users"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint">
+      <span>Scroll to Form</span>
+      <i class="fa-solid fa-chevron-down"></i>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------------------
+       3. Main Interaction — THE THREE KOLAM DOTS
+       ------------------------------------------------------------------------ -->
+  <section class="interaction-section" id="interactive-nodes">
+    <div class="village-ribbon" aria-hidden="true"><span>DAWN</span><i></i><span>PULLI</span><i></i><span>KAMBI</span><i></i><span>KOLAM</span><i></i><span>COURTYARD</span></div>
+
+    <div class="section-header">
+      <span class="section-tag">Interactive Navigation System</span>
+      <h2 class="section-title">The Three Kolam Dots</h2>
+      <p class="section-description">
+        Choose your path through the geometry. Select a node within the Kolam pattern below to initiate creation or restoration.
+      </p>
+    </div>
+
+    <!-- Triangular Kolam Dot Node Formation -->
+    <div class="kolam-nodes-container">
+      <canvas id="magnetic-canvas" class="magnetic-canvas"></canvas>
+      <svg class="nodes-svg-bg" viewBox="0 0 900 520" preserveAspectRatio="none" fill="none">
+        <!-- SymmetricalConnecting Curves -->
+        <path d="M 220 380 Q 450 100 680 380" stroke="var(--border-terracotta)" stroke-width="2" stroke-dasharray="6 6" />
+        <path d="M 220 380 Q 450 480 680 380" stroke="var(--border-terracotta)" stroke-width="2" stroke-dasharray="6 6" />
+        <path d="M 450 120 L 220 380" stroke="var(--border-terracotta)" stroke-width="1.5" />
+        <path d="M 450 120 L 680 380" stroke="var(--border-terracotta)" stroke-width="1.5" />
+        <circle cx="450" cy="250" r="8" fill="var(--gold)" />
+      </svg>
+
+      <div class="nodes-grid">
+        <!-- DOT 01: Voice Chat -->
+        <div class="kolam-node" id="node-voice" onclick="selectNode('voice')" tabindex="0">
+          <div class="kolam-node-dot"></div>
+          <div class="kolam-node-icon"><i class="fa-solid fa-microphone-lines"></i></div>
+          <h3 class="kolam-node-title">VOICE CHAT</h3>
+          <p class="kolam-node-subtitle">DOT 01 • Speak your pattern</p>
+        </div>
+
+        <!-- DOT 02: Text Chat -->
+        <div class="kolam-node active" id="node-text" onclick="selectNode('text')" tabindex="0">
+          <div class="kolam-node-dot"></div>
+          <div class="kolam-node-icon"><i class="fa-solid fa-pen-nib"></i></div>
+          <h3 class="kolam-node-title">TEXT CHAT</h3>
+          <p class="kolam-node-subtitle">DOT 02 • Describe in words</p>
+        </div>
+
+        <!-- DOT 03: Restore Kolam -->
+        <div class="kolam-node" id="node-restore" onclick="selectNode('restore')" tabindex="0">
+          <div class="kolam-node-dot"></div>
+          <div class="kolam-node-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+          <h3 class="kolam-node-title">RESTORE KOLAM</h3>
+          <p class="kolam-node-subtitle">DOT 03 • Revive damaged art</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ------------------------------------------------------------------------
+         4. Workspaces Container
+         ------------------------------------------------------------------------ -->
+    <div class="workspace-wrapper">
+      
+      <!-- Panel 1: Voice Chat Workspace -->
+      <div class="workspace-panel" id="workspace-voice">
+        <div class="workspace-header">
+          <div class="workspace-title-group">
+            <div class="workspace-badge-icon"><i class="fa-solid fa-microphone-lines"></i></div>
+            <div>
+              <h3>Voice-Guided Kolam Generator</h3>
+              <p class="section-description">Speak your Kolam concept aloud. Speech recognition will convert your words into geometry.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="voice-interface">
+          <div class="mic-container">
+            <div class="mic-pulse-ring" id="mic-ring-1"></div>
+            <div class="mic-pulse-ring" id="mic-ring-2"></div>
+            <button class="mic-button" id="mic-btn" onclick="toggleVoiceRecognition()" aria-label="Start Voice Recording">
+              <i class="fa-solid fa-microphone" id="mic-icon"></i>
+            </button>
+          </div>
+
+          <div class="voice-status" id="voice-status">READY TO LISTEN</div>
+
+          <div class="transcript-box" id="voice-transcript">
+            <span class="transcript-placeholder">Click the microphone button and describe your Kolam (e.g., "5x5 dot grid Kolam with lotus symmetry")...</span>
+          </div>
+
+          <div class="voice-controls">
+            <button class="btn-secondary" onclick="stopVoiceRecognition()"><i class="fa-solid fa-stop"></i> Stop</button>
+            <button class="btn-primary" id="btn-voice-confirm" onclick="submitVoicePrompt()"><i class="fa-solid fa-sparkles"></i> Confirm & Generate</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 2: Text Chat Workspace (Default Active) -->
+      <div class="workspace-panel active" id="workspace-text">
+        <canvas id="magnetic-canvas-text" class="magnetic-canvas"></canvas>
+        <div class="workspace-header">
+          <div class="workspace-title-group">
+            <div class="workspace-badge-icon"><i class="fa-solid fa-pen-nib"></i></div>
+            <div>
+              <h3>Conversational Text Generator</h3>
+              <p class="section-description">Describe your desired grid matrix, loop curvature, or symmetry style.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-interface">
+          <div class="text-chat-card">
+            <div class="chat-history" id="chat-history">
+              <div class="chat-bubble ai">
+                Namaste! Describe the Kolam pattern you would like to construct (e.g. "A 5x5 Pulli grid Kolam with continuous lotus loops").
+              </div>
+            </div>
+
+            <div class="text-input-group">
+              <textarea class="prompt-textarea" id="text-prompt" placeholder="Describe your Kolam (e.g., 7x7 dot grid Kolam with symmetrical snake loops)..." rows="2" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); submitTextPrompt();}"></textarea>
+              <button class="btn-primary" id="btn-text-submit" onclick="submitTextPrompt()">
+                <span>Generate</span>
+                <i class="fa-solid fa-paper-plane"></i>
+              </button>
+            </div>
+
+            <div class="suggestion-chips">
+              <span class="chip" onclick="applySuggestion('5x5 dot grid Kolam with lotus symmetry')">🌸 5x5 Lotus Symmetry</span>
+              <span class="chip" onclick="applySuggestion('7x7 continuous Eulerian loop Sikku Kolam')">🌀 7x7 Sikku Loop</span>
+              <span class="chip" onclick="applySuggestion('8-fold radial mandala Kolam with terracotta accents')">☀️ 8-Fold Mandala</span>
+              <span class="chip" onclick="applySuggestion('9x9 traditional rice flour pulli kolam')">✨ 9x9 Traditional Grid</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 3: Upload & Restore Workspace -->
+      <div class="workspace-panel" id="workspace-restore">
+        <div class="workspace-header">
+          <div class="workspace-title-group">
+            <div class="workspace-badge-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+            <div>
+              <h3>Restore a Lost Pattern</h3>
+              <p class="section-description">Give a damaged, eroded, or partial Kolam image a second life with AI geometry reconstruction.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="restore-interface">
+          <div class="dropzone-container" id="restore-dropzone" onclick="document.getElementById('restore-file-input').click()">
+            <div class="dropzone-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+            <h4 class="dropzone-prompt">Drag & Drop your Kolam photo here</h4>
+            <p class="dropzone-subtext">or click to browse from your device (Max 10MB • PNG, JPG, WEBP)</p>
+            <input type="file" id="restore-file-input" accept="image/*" style="display:none;" onchange="handleFileSelect(event)">
+          </div>
+
+          <div class="image-preview-container" id="restore-preview-container">
+            <img id="restore-preview-img" src="" alt="Selected Kolam Preview">
+            <button class="remove-image-btn" onclick="clearSelectedImage()" aria-label="Remove Image"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+
+          <button class="btn-primary" id="btn-restore-submit" onclick="submitImageRestoration()" style="display:none;">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Restore Kolam Pattern
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------------------
+       5. Loading Experience & Rotating Facts Overlay
+       ------------------------------------------------------------------------ -->
+  <div class="loading-overlay" id="loading-overlay">
+
+    <!-- Paisley / toran border strip -->
+    <div class="loading-toran" aria-hidden="true"></div>
+
+    <!-- Falling flower petals -->
+    <div class="loading-petals" id="loading-petals" aria-hidden="true"></div>
+
+    <!-- Classical mathematical notation drifting around the loader -->
+    <div class="loading-math" aria-hidden="true">
+      <span class="loading-math-symbol loading-math-symbol--one">P<sub>i,j</sub> &isin; {0, 1}</span>
+      <span class="loading-math-symbol loading-math-symbol--two">R<sub>n</sub>(&theta;) = 2&pi; / n</span>
+      <span class="loading-math-symbol loading-math-symbol--three">G = (V, E)</span>
+      <span class="loading-math-symbol loading-math-symbol--four">V &minus; E + F = 2</span>
+      <span class="loading-math-symbol loading-math-symbol--five">r = a cos(n&theta;)</span>
+      <span class="loading-math-symbol loading-math-symbol--six">&sum;<sub>k=1</sub><sup>n</sup> &ang; e<sub>k</sub> = 2&pi;</span>
+    </div>
+
+    <!-- Ambient instrumental sound toggle -->
+    <button class="loading-sound-toggle" id="loading-sound-toggle" onclick="toggleAmbientMute()" aria-label="Toggle ambient instrumental sound" title="Toggle ambient instrumental sound">
+      <i class="fa-solid fa-volume-high" id="loading-sound-icon"></i>
+    </button>
+
+    <div class="loading-overlay-content">
+      <div class="loader-kolam-wrap" id="loader-kolam-wrap">
+        <div class="loader-kolam-svg">
+          <svg viewBox="0 0 100 100" fill="none" stroke="currentColor">
+            <circle cx="50" cy="50" r="40" stroke="var(--terracotta)" stroke-width="3" stroke-dasharray="8 4" />
+            <path d="M 50 10 Q 90 50 50 90 Q 10 50 50 10 Z" stroke="var(--maroon)" stroke-width="4" fill="none" />
+            <circle cx="50" cy="50" r="10" fill="var(--gold)" />
+          </svg>
+        </div>
+      </div>
+
+      <h3 class="loader-title" id="loading-title">THE PATTERN IS FORMING...</h3>
+
+      <div class="fact-card">
+        <div class="fact-tag">KOLAM ETHNOMATHEMATICS</div>
+        <p class="fact-text" id="fact-text">Fetching cultural facts...</p>
+      </div>
+
+      <div class="timeout-warning" id="timeout-warning">
+        <p>THE PATTERN IS TAKING LONGER THAN EXPECTED.</p>
+        <button class="btn-secondary" id="btn-loading-retry" onclick="retryLastOperation()" style="margin-top: 12px;">
+          <i class="fa-solid fa-rotate-right"></i> Try Again
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom middle: pulli (dot) progress trail -->
+    <div class="loading-bottom-bar" aria-hidden="true">
+      <div class="loading-progress-dots" id="loading-progress-dots"></div>
+    </div>
+  </div>
+
+  <!-- ------------------------------------------------------------------------
+       6. Results & Interactive Comparison Slider Section
+       ------------------------------------------------------------------------ -->
+  <section class="results-section" id="section-results">
+    <div class="section-header">
+      <span class="section-tag">AI Generation Output</span>
+      <h2 class="section-title">Completed Pattern</h2>
+    </div>
+
+    <div class="results-card">
+      <div class="results-visual" id="results-visual-container">
+        <!-- Standard Generated Image Display OR Before/After Split Comparison Slider -->
+        <img src="" alt="Generated Kolam Artwork" class="results-image" id="results-img">
+      </div>
+
+      <div class="results-info">
+        <h3 class="results-title" id="results-title-text">Symmetrical Lotus Kolam</h3>
+        
+        <div class="results-meta" id="results-meta-text">
+          Prompt: "5x5 dot grid Kolam with lotus symmetry"
+        </div>
+
+        <!-- Significance / Real-Life Applications side box -->
+        <div class="results-significance" id="results-significance">
+          <!-- populated by renderResultsSignificance() in script.js -->
+        </div>
+
+        <div class="results-actions">
+          <button class="btn-primary" id="btn-download-result" onclick="downloadCurrentResult()">
+            <i class="fa-solid fa-download"></i> Download PNG
+          </button>
+          <button class="btn-secondary" onclick="saveCurrentToGallery()">
+            <i class="fa-solid fa-bookmark"></i> Save to Gallery
+          </button>
+          <a href="#interactive-nodes" class="btn-secondary">
+            <i class="fa-solid fa-plus"></i> Create Another
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------------------
+       7. Community Section — "KOLAM OF THE DAY"
+       ------------------------------------------------------------------------ -->
+  <section class="community-section" id="community">
+    <div class="section-header">
+      <span class="section-tag">Community Wall</span>
+      <h2 class="section-title">KOLAM OF THE DAY</h2>
+      <p class="section-description">
+        A new pattern rises with the sun. Browse today's featured Kolam, share your own creation, and celebrate the community's art together.
+      </p>
+    </div>
+
+    <!-- Featured "Kolam of the Day" -->
+    <div class="kotd-hero" id="kotd-hero">
+      <!-- populated by renderKolamOfTheDay() in script.js -->
+    </div>
+
+    <!-- Upload / Share Box -->
+    <div class="community-upload-box">
+      <h3 class="upload-box-title"><i class="fa-solid fa-image"></i> Share Your Kolam</h3>
+
+      <div class="dropzone-container" id="community-dropzone" onclick="document.getElementById('community-file-input').click()">
+        <div class="dropzone-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+        <h4 class="dropzone-prompt">Drag & Drop your Kolam photo here</h4>
+        <p class="dropzone-subtext">or click to browse (PNG, JPG, WEBP)</p>
+        <input type="file" id="community-file-input" accept="image/*" style="display:none;" onchange="handleCommunityFileSelect(event)">
+      </div>
+
+      <div class="image-preview-container" id="community-preview-container">
+        <img id="community-preview-img" src="" alt="Selected Kolam Preview">
+        <button class="remove-image-btn" onclick="clearCommunitySelectedImage()" aria-label="Remove Image"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <textarea class="prompt-textarea" id="community-caption" placeholder="Add a caption for your Kolam (optional)..." rows="2"></textarea>
+
+      <button class="btn-primary" id="btn-community-submit" onclick="submitCommunityPost()" style="display:none;">
+        <i class="fa-solid fa-paper-plane"></i> Post to Community
+      </button>
+    </div>
+
+    <!-- Community Feed -->
+    <div class="community-feed" id="community-feed">
+      <!-- populated by renderCommunityFeed() in script.js -->
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------------------
+       9. Saved Gallery Modal
+       ------------------------------------------------------------------------ -->
+  <div class="gallery-modal" id="gallery-modal">
+    <div class="gallery-content">
+      <div class="workspace-header">
+        <h3>Saved Kolam Patterns</h3>
+        <button class="remove-image-btn" onclick="closeGalleryModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="gallery-grid" id="gallery-grid">
+        <p style="color: var(--text-muted);">No saved patterns yet. Generate or restore a Kolam to save it here!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ------------------------------------------------------------------------
+       10. Footer & Toast Container
+       ------------------------------------------------------------------------ -->
+  <div class="village-footer-motif" aria-hidden="true"><svg viewBox="0 0 1200 110" preserveAspectRatio="none"><path d="M0 85Q80 55 160 80T320 80T480 78T640 82T800 76T960 80T1120 76T1200 80" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="150" cy="78" r="4"/><circle cx="300" cy="79" r="4"/><circle cx="450" cy="77" r="4"/><circle cx="600" cy="81" r="4"/><circle cx="750" cy="78" r="4"/><circle cx="900" cy="79" r="4"/><circle cx="1050" cy="77" r="4"/></svg></div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-logo">
+        • ◯ • KOLAM
+      </div>
+      <p>"Preserving traditional art through mathematics, geometry, and technology."</p>
+
+      <ul class="footer-links">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#interactive-nodes">Create</a></li>
+        <li><a href="#interactive-nodes" onclick="selectNode('restore')">Restore</a></li>
+        <li><a href="#community">Community</a></li>
+        <li><a href="javascript:void(0)" onclick="openGalleryModal()">Saved Gallery</a></li>
+      </ul>
+
+      <p style="font-size: 0.85rem; opacity: 0.6; margin-top: 20px;">
+        © 2026 Kolam Project • Built with Vanilla HTML5, CSS3, & JS.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Main JavaScript File -->
+  <script src="script.js"></script>
+</body>
+</html>
