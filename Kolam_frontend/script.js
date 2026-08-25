@@ -1189,9 +1189,10 @@ function renderAlgorithmicKolamDataUrl(totalDots, gridType = "diamond") {
   }
 
   // Calculate proportional grid matrix dimension
+ // Calculate proportional grid matrix dimension
   let tnumber = Math.ceil(Math.sqrt(totalDots * 2));
   if (tnumber < 3) tnumber = 3;
-  if (tnumber > 12) tnumber = 12;
+  if (tnumber > 30) tnumber = 30; // Increased limit to support up to ~450 dots
 
   // Link Matrix with 8-Way Dihedral (D4) Symmetry
   let nlink = [];
